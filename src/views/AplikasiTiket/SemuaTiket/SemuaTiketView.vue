@@ -1,0 +1,15 @@
+<script setup lang="ts">
+
+import SemuaTiketIndex from '@/components/AplikasiTiket/SemuaTiket/SemuaTiketIndex.vue';
+import DefaultLayout from '@/layouts/DefaultLayout.vue';
+
+</script>
+
+<template>
+    <DefaultLayout>
+        <div class="grid lg:grid-cols-1 gap-3 md:grid-cols-1 h-300vh">
+            <!-- <RealTimeDashboard /> -->
+            <SemuaTiketIndex />
+        </div>
+    </DefaultLayout>
+</template>
