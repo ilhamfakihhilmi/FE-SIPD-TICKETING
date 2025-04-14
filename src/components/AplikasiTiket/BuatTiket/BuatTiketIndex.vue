@@ -3,7 +3,7 @@
 
 <template>
     <div>
-        <h1>BAUT TIKET PAGE</h1>
+        <h1>BUAT TIKET PAGE</h1>
     </div>
 </template>
 
