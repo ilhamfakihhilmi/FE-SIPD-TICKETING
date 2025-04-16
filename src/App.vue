@@ -28,7 +28,7 @@ onBeforeUnmount(() => {
 
 <template>
   <RouterView />
-  <iframe ref="iframeRef" id="chatbot-frame" src="http://localhost:3000" style="
+  <iframe ref="iframeRef" id="chatbot-frame" src="https://sipd-chatbot.vercel.app/" style="
       position: fixed;
       bottom: 20px;
       right: 20px;
