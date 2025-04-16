@@ -12,7 +12,7 @@ const handleMessage = (event: MessageEvent) => {
     isChatOpen.value = isOpen;
     if (iframeRef.value) {
       iframeRef.value.style.width = isOpen ? '380px' : '90px';
-      iframeRef.value.style.height = isOpen ? '580px' : '90px';
+      iframeRef.value.style.height = isOpen ? '680px' : '90px';
     }
   }
 };
