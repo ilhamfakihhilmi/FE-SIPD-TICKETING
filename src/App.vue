@@ -149,13 +149,13 @@ watch(token, (newToken) => {
     position: 'fixed',
     bottom: '20px',
     right: '20px',
-    width: isChatOpen ? '380px' : '60px',
-    height: isChatOpen ? '680px' : '60px',
+    width: isChatOpen ? '380px' : '80px',
+    height: isChatOpen ? '680px' : '80px',
     transition: 'all 0.3s ease',
     border: 'none',
     borderRadius: '12px',
     zIndex: 9999,
     overflow: 'hidden',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+    // boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
   }" allow="microphone" title="Chatbot"></iframe>
 </template>
