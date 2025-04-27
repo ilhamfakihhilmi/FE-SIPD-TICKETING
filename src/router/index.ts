@@ -3,11 +3,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 // Import Layouts
 
 // Import Views
+import SipdClone from '@/components/DemoSipdClone/Index.vue'
 import AktivitasView from '@/views/AplikasiTiket/Aktivitas/AktivitasView.vue'
 import BuatTiketView from '@/views/AplikasiTiket/BuatTiket/BuatTiketView.vue'
 import SemuaTiketView from '@/views/AplikasiTiket/SemuaTiket/SemuaTiketView.vue'
 import SigninView from '@/views/Authentication/SigninView.vue'
-import Index from '@/views/Dashboard/DashboardIndex.vue'
 import LaporanView from '@/views/LaporanTiket/Laporan/LaporanView.vue'
 import KategoriView from '@/views/MasterData/Kategori/KategoriView.vue'
 import KotaKabView from '@/views/MasterData/KotaKab/KotaKabView.vue'
@@ -15,6 +15,8 @@ import PrioritasView from '@/views/MasterData/Prioritas/PrioritasView.vue'
 import ProvinsiView from '@/views/MasterData/Provinsi/ProvinsiView.vue'
 import StatusView from '@/views/MasterData/Status/StatusView.vue'
 import SolusiTeknisView from '@/views/SolusiTeknis/SolusiTeknisi/SolusiTeknisView.vue'
+
+
 SolusiTeknisView
 
 // Define routes
@@ -31,7 +33,7 @@ const routes = [
   },
   {
     path: '/dashboard',
-    component: Index,
+    component: SipdClone,
     name: 'dashboard',
     meta: { requiresAuth: true, title: 'Dashboard' }
   },

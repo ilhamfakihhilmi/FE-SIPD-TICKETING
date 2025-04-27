@@ -19,8 +19,6 @@ const iframeLoading = ref(false);
 // CORS safe origin check
 const isAllowedOrigin = (origin: string) => {
   const allowedOrigins = [
-    'http://localhost:3000',
-    'https://your-production-chatbot-domain.com',
     'http://82.25.108.179:3000' // Added your chatbot IP
   ];
   return allowedOrigins.includes(origin);
@@ -31,7 +29,7 @@ const fetchUserData = async () => {
   if (!token.value) return;
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/profile', {
+    const response = await fetch('http://82.25.108.179:9003/api/profile', {
       headers: {
         'Authorization': `Bearer ${token.value}`,
         'Accept': 'application/json',
