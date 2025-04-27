@@ -7,11 +7,21 @@
                 <img src="https://sipd.kemendagri.go.id/landing/assets/images/logo/logo-light-min.webp" alt="Logo SIPD"
                     class="w-24 h-12 object-contain" />
             </div>
-            <!-- Contact Info -->
-            <div class="text-right text-sm leading-snug flex flex-row gap-10">
-                <p class="text-black font-medium">Beranda</p>
-                <p class="text-black font-medium">Hot-line CS +6281317633727</p>
-                <p class="text-black font-medium">Email sipd@kemendagri.go.id</p>
+
+            <!-- Contact Info dan Logout Button -->
+            <div class="flex items-center gap-10">
+                <div class="text-right text-sm leading-snug flex flex-row gap-10">
+                    <p class="text-black font-bold">Beranda</p>
+                    <p class="text-black font-bold">Hot-line CS +6281317633727</p>
+                    <p class="text-black font-bold">Email sipd@kemendagri.go.id</p>
+                </div>
+
+                <!-- Logout Button -->
+                <button @click="handleLogout"
+                    class="flex items-center gap-2 text-red-600 hover:text-red-800 transition-colors" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="hidden md:inline">Logout</span>
+                </button>
             </div>
         </header>
 
@@ -28,7 +38,7 @@
                         <img src="https://sipd.kemendagri.go.id/landing/assets/images/logo/symbol-white-letter.png"
                             alt="Logo SIPD" class="w-[700px] h-[300px] object-contain" />
                     </div>
-                    <p class="mt-6 text-gray-400 text-sm md:text-base leading-relaxed">
+                    <p class="mt-6 text-white text-sm md:text-base leading-relaxed">
                         Pengelolaan informasi pembangunan daerah, informasi keuangan daerah, dan informasi pemerintahan
                         daerah
                         lainnya yang saling terhubung untuk dimanfaatkan dalam penyelenggaraan pembangunan daerah.
@@ -51,15 +61,11 @@
                         class="flex-1 min-h-[200px] bg-white bg-opacity-10 rounded-xl p-4 backdrop-blur-md relative z-10 flex flex-col justify-between">
                         <div>
                             <h3 class="text-lg font-bold text-white mb-4">Informasi Aplikasi</h3>
-                            <p class="text-white">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quibusdam
-                                asperiores
-                                mollitia harum dolore
-                                consequatur vel amet quam dolores rem, alias magni inventore ipsum nisi quaerat eveniet,
-                                quo molestiae,
-                                tenetur eum.</p>
+                            <p class="text-white">Pelajari cara kerja Sistem Informasi Pemerintahan Daerah dengan mudah
+                                melalui beberapa video panduan berikut.</p>
                         </div>
                         <button
-                            class="bg-white text-gray-800 font-medium px-4 py-2 rounded-md hover:bg-gray-200 transition">
+                            class="bg-white text-gray-800 font-medium px-4 py-2 rounded-md hover:bg-gray-200 transition w-[30%]">
                             Unduh
                         </button>
                     </div>
@@ -75,13 +81,13 @@
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div v-for="layanan in daftarLayanan" :key="layanan.judul"
-                        class="bg-gray-900 text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg">
-                        <img :src="layanan.img" alt="icon" class="w-[250px] mx-auto mb-12" />
-                        <h3 class="text-xl font-bold text-center mb-2">{{ layanan.judul }}</h3>
-                        <p class="text-sm text-center mb-12">{{ layanan.deskripsi }}</p>
+                        class="bg-graydark text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg">
+                        <img :src="layanan.img" alt="icon" class="w-[350px] mx-auto mb-12 mt-12" />
+                        <h3 class="text-xl font-bold text-center mb-10">{{ layanan.judul }}</h3>
+                        <p class="text-sm text-center mb-20">{{ layanan.deskripsi }}</p>
                         <p class="text-xs text-center text-gray-400 mb-12">- {{ layanan.peraturan }} -</p>
                         <div class="text-center mt-auto">
-                            <button class="bg-white text-black px-4 py-2 rounded-md hover:bg-gray-200 transition">
+                            <button class="bg-white text-black px-6 py-2 rounded-md hover:bg-gray-200 transition">
                                 Selengkapnya
                             </button>
                         </div>
@@ -176,6 +182,69 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router';
+
+const handleLogout = async () => {
+    try {
+        // Clear authentication data
+        localStorage.removeItem('token');
+        token.value = null;
+        userData.value = null;
+
+        // Clear cookies
+        document.cookie.split(";").forEach(cookie => {
+            document.cookie = cookie.replace(/^ +/, "")
+                .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+        });
+
+        // Clear session storage
+        sessionStorage.clear();
+
+        // Clear cache
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(
+                cacheNames.map(cacheName => caches.delete(cacheName))
+            );
+        }
+
+        // Unregister service workers
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+                await registration.unregister();
+            }
+        }
+
+        // Clear indexedDB
+        if ('indexedDB' in window) {
+            try {
+                const dbs = await window.indexedDB.databases();
+                for (const db of dbs) {
+                    if (db.name) {
+                        window.indexedDB.deleteDatabase(db.name);
+                    }
+                }
+            } catch (e) {
+                console.warn('Failed to clear indexedDB:', e);
+            }
+        }
+
+        // Clear axios headers if used
+        if (window.axios && window.axios.defaults.headers.common['Authorization']) {
+            delete window.axios.defaults.headers.common['Authorization'];
+        }
+
+        // Redirect ke halaman login yang benar
+        router.push({ path: '/auth/signin', query: { logout: 'true' } });
+
+    } catch (error) {
+        console.error('Error during logout:', error);
+        // Fallback redirect kalau error
+        window.location.href = '/auth/signin?logout=true';
+    }
+};
+
 
 // Image slider data
 const images = [
@@ -297,6 +366,8 @@ const handleMessage = (event) => {
         }
     }
 }
+
+const router = useRouter();
 
 // Iframe event handlers
 const handleIframeLoad = () => {
@@ -422,5 +493,16 @@ onUnmounted(() => {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+
+/* Logout button styles */
+.fa-sign-out-alt {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .hidden-md {
+        display: none;
+    }
 }
 </style>

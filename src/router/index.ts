@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-// Import Layouts
-
 // Import Views
 import SipdClone from '@/components/DemoSipdClone/Index.vue'
 import AktivitasView from '@/views/AplikasiTiket/Aktivitas/AktivitasView.vue'
@@ -15,9 +13,6 @@ import PrioritasView from '@/views/MasterData/Prioritas/PrioritasView.vue'
 import ProvinsiView from '@/views/MasterData/Provinsi/ProvinsiView.vue'
 import StatusView from '@/views/MasterData/Status/StatusView.vue'
 import SolusiTeknisView from '@/views/SolusiTeknis/SolusiTeknisi/SolusiTeknisView.vue'
-
-
-SolusiTeknisView
 
 // Define routes
 const routes = [
@@ -47,7 +42,7 @@ const routes = [
     path: '/kotakabupaten',
     name: 'kotakabupaten',
     component: KotaKabView,
-    meta: { requiresAuth: true, title: 'KotaKab' }
+    meta: { requiresAuth: true, title: 'KotaKabupaten' }
   },
   {
     path: '/kategori',
@@ -77,13 +72,13 @@ const routes = [
     path: '/semuatiket',
     name: 'semuatiket',
     component: SemuaTiketView,
-    meta: { requiresAuth: true, title: 'Semuatiket' }
+    meta: { requiresAuth: true, title: 'Semua Tiket' }
   },
   {
     path: '/buattiket',
     name: 'buattiket',
     component: BuatTiketView,
-    meta: { requiresAuth: true, title: 'BuatTiket' }
+    meta: { requiresAuth: true, title: 'Buat Tiket' }
   },
   {
     path: '/laporan',
@@ -95,7 +90,7 @@ const routes = [
     path: '/solusiteknis',
     name: 'solusiteknis',
     component: SolusiTeknisView,
-    meta: { requiresAuth: true, title: 'SolusiTeknis' }
+    meta: { requiresAuth: true, title: 'Solusi Teknis' }
   }
 ]
 
@@ -111,15 +106,18 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
 
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    // Redirect to signin if route requires auth and token is not present
+  if (to.name === 'signin' && token) {
+    // Kalau sudah login dan mau ke /auth/signin, redirect ke dashboard
+    next({ name: 'dashboard' })
+  } else if (to.matched.some((record) => record.meta.requiresAuth)) {
+    // Kalau butuh auth dan token tidak ada, redirect ke signin
     if (!token) {
       next({ name: 'signin' })
     } else {
-      next() // Proceed if authenticated
+      next() // Ada token, lanjut
     }
   } else {
-    next() // Proceed if route does not require auth
+    next() // Route tidak butuh auth, lanjut
   }
 })
 
