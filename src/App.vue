@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue';
 import { RouterView } from 'vue-router';
 
 // Refs
@@ -13,13 +13,12 @@ const userData = ref<{
   phone_number?: string;
 } | null>(null);
 const isLoggedIn = ref(!!token.value);
-const iframeError = ref(false);
-const iframeLoading = ref(false);
 
 // CORS safe origin check
 const isAllowedOrigin = (origin: string) => {
   const allowedOrigins = [
-    'http://82.25.108.179:3000' // Added your chatbot IP
+    'http://localhost:3000',
+    'https://your-production-chatbot-domain.com'
   ];
   return allowedOrigins.includes(origin);
 };
@@ -60,33 +59,35 @@ const fetchUserData = async () => {
 // Send auth data to chatbot iframe securely
 const sendAuthDataToIframe = () => {
   const iframe = iframeRef.value;
-  if (!iframe || !token.value || !userData.value) return;
+  if (!iframe || !token.value) return;
 
-  const chatbotOrigin = 'http://82.25.108.179:3000'; // Updated to your chatbot IP
+  const chatbotOrigin = 'http://localhost:3000';
 
-  try {
-    iframe.contentWindow?.postMessage({
-      type: 'auth',
-      token: token.value,
-      user: {
-        id: userData.value.id,
-        name: userData.value.name,
-        email: userData.value.email,
-        phone: userData.value.phone_number
+  const payload = {
+    type: 'auth',
+    token: token.value,
+    user: {
+      id: userData.value?.id,
+      name: userData.value?.name,
+      email: userData.value?.email,
+      phone: userData.value?.phone_number,
+      // Include token in user data
+      auth_token: token.value,
+      // Include raw token data if needed
+      token_data: {
+        value: token.value,
+        expires_at: localStorage.getItem('token_expires_at'),
+        token_type: 'Bearer'
       }
-    }, chatbotOrigin);
-  } catch (error) {
-    console.error('Failed to post message to iframe:', error);
-  }
+    }
+  };
+
+  iframe.contentWindow?.postMessage(payload, chatbotOrigin);
 };
 
 // Handle messages from iframe securely
 const handleMessage = (event: MessageEvent) => {
-  // Security check
-  if (!isAllowedOrigin(event.origin)) {
-    console.warn('Message from unauthorized origin:', event.origin);
-    return;
-  }
+  if (!isAllowedOrigin(event.origin)) return;
 
   const { type, isOpen } = event.data || {};
 
@@ -97,20 +98,11 @@ const handleMessage = (event: MessageEvent) => {
       iframeRef.value.style.height = isOpen ? '680px' : '60px';
     }
   }
-};
 
-// Handle iframe load events
-const handleIframeLoad = () => {
-  iframeLoading.value = false;
-  iframeError.value = false;
-  console.log('Iframe loaded successfully');
-  setTimeout(sendAuthDataToIframe, 1000);
-};
-
-const handleIframeError = () => {
-  iframeLoading.value = false;
-  iframeError.value = true;
-  console.error('Iframe failed to load');
+  // Handle token refresh requests from iframe
+  if (type === 'refresh_token' && token.value) {
+    sendAuthDataToIframe();
+  }
 };
 
 // Lifecycle hooks
@@ -120,12 +112,11 @@ onMounted(() => {
 
   const iframe = iframeRef.value;
   if (iframe) {
-    iframeLoading.value = true;
-    iframe.addEventListener('load', handleIframeLoad);
-    iframe.addEventListener('error', handleIframeError);
+    iframe.addEventListener('load', () => {
+      setTimeout(sendAuthDataToIframe, 1000);
+    });
   }
 
-  // Listen for token changes across tabs
   window.addEventListener('storage', (event) => {
     if (event.key === 'token') {
       token.value = event.newValue;
@@ -140,11 +131,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('message', handleMessage);
-  const iframe = iframeRef.value;
-  if (iframe) {
-    iframe.removeEventListener('load', handleIframeLoad);
-    iframe.removeEventListener('error', handleIframeError);
-  }
   window.removeEventListener('storage', () => { });
 });
 
@@ -168,76 +154,18 @@ watch(token, (newToken) => {
 <template>
   <RouterView />
 
-  <!-- Chatbot iframe with improved error handling -->
-  <div v-if="isLoggedIn" class="chatbot-container">
-    <iframe ref="iframeRef" id="chatbot-frame" src="http://82.25.108.179:3000"
-      :class="{ 'iframe-error': iframeError, 'iframe-loading': iframeLoading }" :style="{
-        width: isChatOpen ? '380px' : '80px',
-        height: isChatOpen ? '680px' : '80px',
-      }" allow="microphone" title="Chatbot"></iframe>
-
-    <div v-if="iframeLoading" class="iframe-loading-state">
-      Loading chatbot...
-    </div>
-
-    <div v-if="iframeError" class="iframe-error-state">
-      Failed to load chatbot.
-      <button @click="iframeError = false; iframeLoading = true; iframeRef?.contentWindow?.location.reload()">
-        Retry
-      </button>
-    </div>
-  </div>
+  <!-- Chatbot iframe - only show when logged in -->
+  <iframe v-if="isLoggedIn" ref="iframeRef" id="chatbot-frame" src="http://localhost:3000/" :style="{
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    width: isChatOpen ? '380px' : '80px',
+    height: isChatOpen ? '680px' : '80px',
+    transition: 'all 0.3s ease',
+    border: 'none',
+    borderRadius: '12px',
+    zIndex: 9999,
+    overflow: 'hidden',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+  }" allow="microphone" title="Chatbot"></iframe>
 </template>
-
-<style scoped>
-.chatbot-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 9999;
-}
-
-#iframe-chatbot {
-  border: none;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.iframe-loading {
-  opacity: 0.5;
-}
-
-.iframe-error {
-  border: 2px solid #ff4444;
-}
-
-.iframe-loading-state,
-.iframe-error-state {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  padding: 10px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  width: 200px;
-  text-align: center;
-}
-
-.iframe-error-state {
-  background: #ffeeee;
-  color: #ff4444;
-}
-
-.iframe-error-state button {
-  margin-top: 8px;
-  padding: 4px 8px;
-  background: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-</style>
