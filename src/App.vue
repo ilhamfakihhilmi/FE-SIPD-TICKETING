@@ -18,6 +18,7 @@ const isLoggedIn = ref(!!token.value);
 const isAllowedOrigin = (origin: string) => {
   const allowedOrigins = [
     'http://localhost:3000',
+    'https://your-production-chatbot-domain.com'
   ];
   return allowedOrigins.includes(origin);
 };
