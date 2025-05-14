@@ -10,7 +10,7 @@ const userData = ref<{
   id?: number;
   name?: string;
   email?: string;
-  phone_number?: string;
+  no_hp?: string;
 } | null>(null);
 const isLoggedIn = ref(!!token.value);
 
@@ -18,7 +18,6 @@ const isLoggedIn = ref(!!token.value);
 const isAllowedOrigin = (origin: string) => {
   const allowedOrigins = [
     'http://localhost:3000',
-    'https://your-production-chatbot-domain.com'
   ];
   return allowedOrigins.includes(origin);
 };
@@ -70,7 +69,7 @@ const sendAuthDataToIframe = () => {
       id: userData.value?.id,
       name: userData.value?.name,
       email: userData.value?.email,
-      phone: userData.value?.phone_number,
+      no_hp: userData.value?.no_hp,
       // Include token in user data
       auth_token: token.value,
       // Include raw token data if needed

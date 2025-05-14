@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import DefaultAuthCard from '@/components/Auths/DefaultAuthCard.vue'
-import { instance } from '@/views/helper/axios'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { instance } from '@/views/helper/axios' // axios instance with interceptor
 
-// Form state
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
@@ -39,23 +38,27 @@ const handleSubmit = async () => {
   try {
     isLoading.value = true
 
-    const response = await instance.post('api/login', {
+    const response = await instance.post('/api/login', {
       email: email.value,
       password: password.value
     })
 
     if (response.data.success) {
       const token = response.data.token
+
+      // Simpan token ke localStorage (atau sessionStorage jika lebih aman)
       localStorage.setItem('token', token)
+
+      // Redirect ke dashboard
       router.push({ name: 'dashboard' })
     } else {
-      errorMessage.value = response.data.message || 'Login gagal, periksa kembali data Anda.'
+      errorMessage.value = response.data.message || 'Login gagal.'
     }
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       errorMessage.value = 'Email atau password salah.'
     } else {
-      errorMessage.value = 'Terjadi kesalahan saat login. Coba lagi nanti.'
+      errorMessage.value = 'Terjadi kesalahan. Coba lagi nanti.'
     }
   } finally {
     isLoading.value = false
@@ -66,16 +69,15 @@ const handleSubmit = async () => {
 <template>
   <DefaultAuthCard subtitle="Start for free" title="Sign In to TailAdmin">
     <form @submit.prevent="handleSubmit">
-      <!-- Email Input -->
+      <!-- Email -->
       <input v-model="email" type="email" placeholder="Enter your email"
         class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-white dark:text-white mb-3" />
 
-      <!-- Password Input with Toggle Icon -->
+      <!-- Password -->
       <div class="relative">
         <input :type="showPassword ? 'text' : 'password'" v-model="password"
           placeholder="6+ Characters, 1 Capital letter"
           class="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary text-white dark:text-white" />
-        <!-- Eye Icon Button -->
         <button type="button" @click="showPassword = !showPassword"
           class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white">
           <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -92,14 +94,14 @@ const handleSubmit = async () => {
         </button>
       </div>
 
-      <!-- Error Message -->
+      <!-- Error -->
       <p v-if="errorMessage" class="text-red mt-2">{{ errorMessage }}</p>
 
-      <!-- Submit Button -->
+      <!-- Submit -->
       <div class="mb-5 mt-6">
         <button type="submit" :disabled="isLoading"
           class="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white transition hover:bg-opacity-90 disabled:opacity-60 disabled:cursor-not-allowed">
-          {{ isLoading ? 'Loading' : 'Masuk' }}
+          {{ isLoading ? 'Loading...' : 'Masuk' }}
         </button>
       </div>
     </form>
