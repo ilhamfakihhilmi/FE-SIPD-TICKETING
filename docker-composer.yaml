@@ -1,0 +1,18 @@
+version: '3.2'
+
+services:
+  frontend:
+    image: lp-frontend-sipd
+    container_name: lp-frontend-sipd
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9007:9007"
+    environment:
+      - PORT=9007
+    networks:
+      - polatix
+networks:
+  polatix:
+    external: true

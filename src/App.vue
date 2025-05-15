@@ -155,7 +155,7 @@ watch(token, (newToken) => {
   <RouterView />
 
   <!-- Chatbot iframe - only show when logged in -->
-  <iframe v-if="isLoggedIn" ref="iframeRef" id="chatbot-frame" src="http://localhost:3000/" :style="{
+  <iframe v-if="isLoggedIn" ref="iframeRef" id="chatbot-frame" src="http://82.25.108.179:9002/" :style="{
     position: 'fixed',
     bottom: '20px',
     right: '20px',
