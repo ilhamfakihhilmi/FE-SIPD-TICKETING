@@ -17,7 +17,7 @@ const isLoggedIn = ref(!!token.value);
 // CORS safe origin check
 const isAllowedOrigin = (origin: string) => {
   const allowedOrigins = [
-    'http://localhost:3000',
+    'http://82.25.108.179:9002',
     'https://your-production-chatbot-domain.com'
   ];
   return allowedOrigins.includes(origin);
@@ -61,7 +61,7 @@ const sendAuthDataToIframe = () => {
   const iframe = iframeRef.value;
   if (!iframe || !token.value) return;
 
-  const chatbotOrigin = 'http://localhost:3000';
+  const chatbotOrigin = 'http://82.25.108.179:9002';
 
   const payload = {
     type: 'auth',
