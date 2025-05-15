@@ -293,7 +293,7 @@ const isAllowedOrigin = (origin) => {
     const allowedOrigins = [
         'http://localhost:3000',
         'https://your-production-chatbot-domain.com',
-        'http://82.25.108.179:3000'
+        'http://82.25.108.179:9002'
     ]
     return allowedOrigins.includes(origin)
 }
@@ -331,7 +331,7 @@ const sendAuthDataToIframe = () => {
     const iframe = iframeRef.value
     if (!iframe || !token.value || !userData.value) return
 
-    const chatbotOrigin = 'http://82.25.108.179:3000'
+    const chatbotOrigin = 'http://82.25.108.179:9002'
 
     try {
         iframe.contentWindow?.postMessage({
