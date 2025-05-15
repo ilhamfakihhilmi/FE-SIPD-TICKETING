@@ -341,7 +341,7 @@ const sendAuthDataToIframe = () => {
                 id: userData.value.id,
                 name: userData.value.name,
                 email: userData.value.email,
-                phone: userData.value.phone_number
+                no_hp: userData.value.no_hp
             }
         }, chatbotOrigin)
     } catch (error) {
