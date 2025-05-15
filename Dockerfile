@@ -19,9 +19,9 @@ RUN npm install -g serve
 
 # Salin hasil build dari tahap build
 # COPY --from=build /app/build /app/build
-COPY --from=build /app/dist /app/dist
 
-WORKDIR /app/build
+COPY --from=build /app/dist /app/dist
+WORKDIR /app/dist
 
 # Port yang dibuka oleh container
 EXPOSE 9007
