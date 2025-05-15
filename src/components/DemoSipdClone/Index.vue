@@ -160,7 +160,7 @@
 
         <!-- Chatbot iframe container -->
         <div class="chatbot-container">
-            <iframe ref="iframeRef" id="chatbot-frame" src="http://82.25.108.179:3000"
+            <iframe ref="iframeRef" id="chatbot-frame" src="http://82.25.108.179:9002"
                 :class="{ 'iframe-error': iframeError, 'iframe-loading': iframeLoading }" :style="{
                     width: isChatOpen ? '380px' : '80px',
                     height: isChatOpen ? '680px' : '80px',
