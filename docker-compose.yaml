@@ -1,18 +1,14 @@
-version: '3.2'
+version: '2.2'
 
 services:
-  frontend:
-    image: lp-frontend-sipd
-    container_name: lp-frontend-sipd
+  lp-frontend-sipd:
+    container_name: lp-frontend-sipd-container  # ← Nama container
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "9007:9007"
+    env_file:
+      - .env
     environment:
       - PORT=9007
-    networks:
-      - polatix
-networks:
-  polatix:
-    external: true
