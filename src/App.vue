@@ -17,7 +17,7 @@ const isLoggedIn = ref(!!token.value);
 // CORS safe origin check
 const isAllowedOrigin = (origin: string) => {
   const allowedOrigins = [
-    'http://82.25.108.179:9002',
+    'http://localhost:3000',
     'https://your-production-chatbot-domain.com'
   ];
   return allowedOrigins.includes(origin);
@@ -61,7 +61,7 @@ const sendAuthDataToIframe = () => {
   const iframe = iframeRef.value;
   if (!iframe || !token.value) return;
 
-  const chatbotOrigin = 'http://82.25.108.179:9002';
+  const chatbotOrigin = 'http://localhost:3000';
 
   const payload = {
     type: 'auth',
@@ -155,7 +155,7 @@ watch(token, (newToken) => {
   <RouterView />
 
   <!-- Chatbot iframe - only show when logged in -->
-  <iframe v-if="isLoggedIn" ref="iframeRef" id="chatbot-frame" src="http://82.25.108.179:9002/" :style="{
+  <iframe v-if="isLoggedIn" ref="iframeRef" id="chatbot-frame" src="http://localhost:3000/" :style="{
     position: 'fixed',
     bottom: '20px',
     right: '20px',
@@ -166,6 +166,6 @@ watch(token, (newToken) => {
     borderRadius: '12px',
     zIndex: 9999,
     overflow: 'hidden',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+    // boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
   }" allow="microphone" title="Chatbot"></iframe>
 </template>
