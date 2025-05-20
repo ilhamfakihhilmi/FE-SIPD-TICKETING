@@ -28,7 +28,7 @@ const fetchUserData = async () => {
   if (!token.value) return;
 
   try {
-    const response = await fetch('http://82.25.108.179:9003/api/profile', {
+    const response = await fetch('http://127.0.0.1:8000/api/profile', {
       headers: {
         'Authorization': `Bearer ${token.value}`,
         'Accept': 'application/json',
