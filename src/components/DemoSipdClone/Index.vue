@@ -4,7 +4,7 @@
         <header class="bg-white w-full px-12 py-4 flex justify-between items-center shadow-md">
             <!-- Logo -->
             <div class="flex items-center gap-3">
-                <img src="https://sipd.kemendagri.go.id/landing/assets/images/logo/logo-light-min.webp" alt="Logo SIPD"
+                <img src="https://pusdatin.dikdasmen.go.id/logo-footer-2.png" alt="Logo SIPD"
                     class="w-24 h-12 object-contain" />
             </div>
 
@@ -12,8 +12,8 @@
             <div class="flex items-center gap-10">
                 <div class="text-right text-sm leading-snug flex flex-row gap-10">
                     <p class="text-black font-bold">Beranda</p>
-                    <p class="text-black font-bold">Hot-line CS +6281317633727</p>
-                    <p class="text-black font-bold">Email sipd@kemendagri.go.id</p>
+                    <p class="text-black font-bold">Hot-line CS (021) 741 8808</p>
+                    <p class="text-black font-bold">Email pusdatin@kemhan.go.id</p>
                 </div>
 
                 <!-- Logout Button -->
@@ -27,42 +27,43 @@
 
         <!-- Content -->
         <main
-            class="flex-1 flex gap-1 items-center justify-center px-2 py-10 bg-[url('https://sifilma.kemendagri.go.id/sam/image/mockup/6c07cb2abfaea6b85b67fb0307331740.jpg')] bg-cover bg-center relative">
+            class="flex-1 flex gap-1 items-center justify-center px-2 py-10 bg-[url('https://pusdatin.dikdasmen.go.id/images/kontak-kami.png')] bg-cover bg-center relative">
             <!-- Dark overlay layer -->
-            <div class="absolute inset-0 bg-black opacity-70 z-0"></div>
+            <div class="absolute inset-0 bg-white opacity-40 z-0"></div>
             <div class="max-w-6xl w-full flex flex-col md:flex-row gap-8 items-center relative z-10">
                 <!-- Left section -->
                 <div class="flex-1">
                     <h1 class="text-2xl md:text-3xl font-semibold text-white">Selamat Datang di,</h1>
                     <div class="flex items-center gap-4 mt-4">
-                        <img src="https://sipd.kemendagri.go.id/landing/assets/images/logo/symbol-white-letter.png"
-                            alt="Logo SIPD" class="w-[700px] h-[300px] object-contain" />
+                        <img src="https://pusdatin.dikdasmen.go.id/logo-footer-2.png" alt="Logo SIPD"
+                            class="w-[700px] h-[300px] object-contain" />
                     </div>
                     <p class="mt-6 text-white text-sm md:text-base leading-relaxed">
-                        Pengelolaan informasi pembangunan daerah, informasi keuangan daerah, dan informasi pemerintahan
-                        daerah
-                        lainnya yang saling terhubung untuk dimanfaatkan dalam penyelenggaraan pembangunan daerah.
+                        Pusdatin (Pusat Data dan Teknologi Informasi) adalah unit kementerian yang mengelola data dan
+                        teknologi informasi, mulai dari pengumpulan hingga penyajian, guna menjamin ketersediaan dan
+                        akurasi informasi.
                     </p>
                 </div>
 
                 <!-- Right section with dynamic image slider -->
-                <div class="flex-1 flex flex-col">
+                <div class="flex-1 flex flex-col gap-4"> <!-- Tambahkan gap untuk spasi konsisten -->
                     <!-- Bagian Carousel Gambar -->
-                    <div class="flex-1 min-h-[300px] rounded-xl p-4 relative z-10 flex justify-center items-center">
-                        <transition-group name="fade" tag="div"
-                            class="relative w-[550px] h-full flex justify-center items-center">
+                    <div
+                        class="w-[600px] h-[250px] rounded-xl p-4 relative z-10 flex justify-center items-center overflow-hidden bg-white bg-opacity-10 backdrop-blur-md">
+                        <transition-group name="fade" tag="div" class="relative w-full h-full">
                             <img v-for="(img, index) in images" v-show="index === currentImage" :key="img" :src="img"
-                                class="w-full h-auto object-contain rounded-md absolute transition-opacity duration-1000" />
+                                class="w-full h-full object-cover rounded-md absolute transition-opacity duration-1000" />
                         </transition-group>
                     </div>
 
                     <!-- Bagian Informasi Aplikasi -->
                     <div
-                        class="flex-1 min-h-[200px] bg-white bg-opacity-10 rounded-xl p-4 backdrop-blur-md relative z-10 flex flex-col justify-between">
+                        class="w-[600px] h-[250px] bg-white bg-opacity-10 rounded-xl p-4 backdrop-blur-md relative z-10 flex flex-col justify-between">
                         <div>
                             <h3 class="text-lg font-bold text-white mb-4">Informasi Aplikasi</h3>
-                            <p class="text-white">Pelajari cara kerja Sistem Informasi Pemerintahan Daerah dengan mudah
-                                melalui beberapa video panduan berikut.</p>
+                            <p class="text-white">Pelajari cara kerja Aplikasi Pusdatin dalam mengelola data dan
+                                teknologi
+                                informasi kementerian dengan mudah melalui beberapa video panduan berikut.</p>
                         </div>
                         <button
                             class="bg-white text-gray-800 font-medium px-4 py-2 rounded-md hover:bg-gray-200 transition w-[30%]">
@@ -72,91 +73,6 @@
                 </div>
             </div>
         </main>
-
-        <!-- Feature Section -->
-        <feature-card class="flex-1 flex flex-row justify-center py-10">
-            <section class="py-10 px-3 bg-white">
-                <h2 class="text-3xl font-bold text-center mb-10 text-black">
-                    LAYANAN <span class="text-blue-500">▼</span>
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div v-for="layanan in daftarLayanan" :key="layanan.judul"
-                        class="bg-graydark text-white rounded-2xl p-6 flex flex-col justify-between shadow-lg">
-                        <img :src="layanan.img" alt="icon" class="w-[350px] mx-auto mb-12 mt-12" />
-                        <h3 class="text-xl font-bold text-center mb-10">{{ layanan.judul }}</h3>
-                        <p class="text-sm text-center mb-20">{{ layanan.deskripsi }}</p>
-                        <p class="text-xs text-center text-gray-400 mb-12">- {{ layanan.peraturan }} -</p>
-                        <div class="text-center mt-auto">
-                            <button class="bg-white text-black px-6 py-2 rounded-md hover:bg-gray-200 transition">
-                                Selengkapnya
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </feature-card>
-
-        <!-- Footer -->
-        <footer class="bg-[#1C1C46] text-white pt-10">
-            <div class="max-w-7xl mx-auto px-6 md:px-1 flex flex-col md:flex-row justify-between flex-wrap gap-8 pb-10">
-                <div class="flex-1 min-w-[170px]">
-                    <h2 class="font-semibold text-lg mb-4">Informasi Aplikasi</h2>
-                    <ul class="space-y-2 text-sm">
-                        <li>• Dasar Hukum</li>
-                        <li>• Dokumentasi</li>
-                        <li>• FAQ</li>
-                    </ul>
-                </div>
-
-                <div class="flex-1 min-w-[200px]">
-                    <h2 class="font-semibold text-lg mb-4">Hubungi Kami</h2>
-                    <ul class="space-y-2 text-sm">
-                        <li class="flex items-center gap-2">
-                            <i class="fas fa-phone-alt"></i> Hot-line CS +6281317633727
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fab fa-whatsapp"></i> whatsapp +6281317633727
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fas fa-envelope"></i> sipd@kemendagri.go.id
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="flex min-w-[200px]">
-                    <div class="w-[150px] mr-4">
-                        <img src="https://sipd.kemendagri.go.id/landing/assets/images/landing-page/1ebacdaf637a5f0c817ffcb5bfb8b2f6.png"
-                            alt="map" class="w-[150px] h-[150px] rounded mb-2" />
-                    </div>
-                    <div class="flex-1">
-                        <h2 class="font-semibold text-lg mb-2">Alamat Kantor</h2>
-                        <p class="text-sm">
-                            Jl. Medan Merdeka Utara No.7, RT.5/RW.2, Gambir, <br />
-                            Kecamatan Gambir, Kota Jakarta Pusat, DKI Jakarta 10110
-                        </p>
-                    </div>
-                </div>
-
-                <div class="flex-1 min-w-[200px]">
-                    <h2 class="font-semibold text-lg mb-4">Media Sosial Kami</h2>
-                    <ul class="space-y-2 text-sm">
-                        <li class="flex items-center gap-2">
-                            <i class="fab fa-instagram"></i> @sipdkemendagri
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fab fa-youtube"></i> sipdkemendagri
-                        </li>
-                        <li class="flex items-center gap-2">
-                            <i class="fab fa-facebook"></i> sipdkemendagri
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="bg-orange-500 text-center py-3 font-semibold text-white">
-                KEMENTERIAN DALAM NEGERI @ 2023
-            </div>
-        </footer>
 
         <!-- Chatbot iframe container -->
         <div class="chatbot-container">
@@ -248,37 +164,16 @@ const handleLogout = async () => {
 
 // Image slider data
 const images = [
-    'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/stiker/papua-barat-daya.png',
-    'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/stiker/jawa-timur.png',
-    'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/stiker/papua.png',
+    'https://assets.promediateknologi.id/crop/135x170:1421x934/750x500/webp/photo/2023/07/04/kalender-pendidikan-tahun-ajaran-baru-2023-2024-untuk-sd-smp-dan-sma-sederajat-di-jawa-tengah-ini-jadwalnya-3853037572.jpg',
+    'https://cdn0-production-images-kly.akamaized.net/P6X-LNkb7qj3h6cVwtgQry04TyQ=/1200x675/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/3892785/original/029382800_1641181317-ptm_jakarta.jpg',
+    'https://smpmutualmagelang.sch.id/wp-content/uploads/2025/01/WhatsApp-Image-2025-01-06-at-14.28.36-780x470.jpeg',
 ]
 
 const currentImage = ref(0)
 let interval = null
 
 // Layanan data
-const daftarLayanan = [
-    {
-        img: 'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/486a7c295e8d89921880de9e54b8c829.png',
-        judul: 'INFORMASI PEMBANGUNAN DAERAH',
-        deskripsi:
-            'Informasi Pembangunan Daerah adalah suatu sistem yang digunakan untuk pengelolaan data dan informasi perencanaan pembangunan daerah, serta analisis dan Profil Pembangunan Daerah.',
-        peraturan: 'Permendagri 70 Tahun 2019 tentang Sistem Informasi Pemerintahan Daerah',
-    },
-    {
-        img: 'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/43dbc65bd062d0f7a3d4b58d78bc04bf.png',
-        judul: 'INFORMASI KEUANGAN DAERAH',
-        deskripsi:
-            'Informasi Keuangan Daerah adalah suatu sistem yang digunakan untuk pengelolaan data dan informasi serta penyusunan, monitoring, dan evaluasi dokumen pengelolaan keuangan daerah secara elektronik.',
-        peraturan: 'Permendagri 70 Tahun 2019 tentang Sistem Informasi Pemerintahan Daerah',
-    },
-    {
-        img: 'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/aed1cc4c287975eccb00d9418a32b88a.png',
-        judul: 'INFORMASI PEMERINTAHAN DAERAH LAINNYA',
-        deskripsi: 'Informasi Pemerintahan Daerah Lainnya adalah suatu sistem yang digunakan untuk pengelolaan data dan informasi lainnya.',
-        peraturan: 'Permendagri 70 Tahun 2019 tentang Sistem Informasi Pemerintahan Daerah',
-    },
-]
+
 
 // Chatbot iframe functionality
 const iframeRef = ref(null)
