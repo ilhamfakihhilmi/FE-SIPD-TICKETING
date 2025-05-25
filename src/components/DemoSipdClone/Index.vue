@@ -76,7 +76,7 @@
 
         <!-- Chatbot iframe container -->
         <div class="chatbot-container">
-            <iframe ref="iframeRef" id="chatbot-frame" src="http://localhost:3000/"
+            <iframe ref="iframeRef" id="chatbot-frame" src="http://82.25.108.179:9002/"
                 :class="{ 'iframe-error': iframeError, 'iframe-loading': iframeLoading }" :style="{
                     width: isChatOpen ? '380px' : '80px',
                     height: isChatOpen ? '680px' : '80px',
@@ -186,9 +186,9 @@ const iframeLoading = ref(false)
 // Check allowed origins for security
 const isAllowedOrigin = (origin) => {
     const allowedOrigins = [
-        'http://localhost:3000',
-        'https://your-production-chatbot-domain.com',
-        // 'http://82.25.108.179:9002',
+        // 'http://localhost:3000',
+        // 'https://your-production-chatbot-domain.com',
+        'http://82.25.108.179:9002',
         // 'http://82.25.108.179:3000'
     ]
     return allowedOrigins.includes(origin)
@@ -228,7 +228,7 @@ const sendAuthDataToIframe = () => {
     if (!iframe || !token.value || !userData.value) return
 
     // const chatbotOrigin = 'http://82.25.108.179:9002'
-    const chatbotOrigin = 'http://localhost:3000'
+    const chatbotOrigin = 'http://82.25.108.179:9002'
 
     try {
         iframe.contentWindow?.postMessage({
