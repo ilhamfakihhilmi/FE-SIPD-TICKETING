@@ -27,7 +27,7 @@
 
         <!-- Content -->
         <main
-            class="flex-1 flex gap-1 items-center justify-center px-2 py-10 bg-[url('https://sifilma.kemendagri.go.id/sam/image/mockup/6c07cb2abfaea6b85b67fb0307331740.jpg')] bg-cover bg-center relative">
+            class="flex-1 flex gap-1 items-center justify-center px-2 py-10 bg-[url(https://sifilma.kemendagri.go.id/sam/image/mockup/6c07cb2abfaea6b85b67fb0307331740.jpg)] bg-cover bg-center relative">
             <!-- Dark overlay layer -->
             <div class="absolute inset-0 bg-black opacity-70 z-0"></div>
             <div class="max-w-6xl w-full flex flex-col md:flex-row gap-8 items-center relative z-10">
@@ -160,7 +160,7 @@
 
         <!-- Chatbot iframe container -->
         <div class="chatbot-container">
-            <iframe ref="iframeRef" id="chatbot-frame" src="http://localhost:3000/"
+            <iframe ref="iframeRef" id="chatbot-frame" :src="env.CHATBOT_URL"
                 :class="{ 'iframe-error': iframeError, 'iframe-loading': iframeLoading }" :style="{
                     width: isChatOpen ? '380px' : '80px',
                     height: isChatOpen ? '680px' : '80px',
@@ -183,6 +183,18 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
+
+const env = {
+    API_BASE_URL: import.meta.env.VITE_APP_API_BASE_URL,
+    CHATBOT_URL: import.meta.env.VITE_APP_CHATBOT_URL,
+    SIPD_LOGO_URL: "https://sipd.kemendagri.go.id/landing/assets/images/logo/logo-light-min.webp",
+    SIPD_SYMBOL_URL: "https://sipd.kemendagri.go.id/landing/assets/images/logo/symbol-white-letter.png",
+    BACKGROUND_IMAGE_URL: "https://sifilma.kemendagri.go.id/sam/image/mockup/6c07cb2abfaea6b85b67fb0307331740.jpg",
+    MAP_IMAGE_URL: "https://sipd.kemendagri.go.id/landing/assets/images/landing-page/1ebacdaf637a5f0c817ffcb5bfb8b2f6.png",
+    LAYANAN_IMAGE_1: "https://sipd.kemendagri.go.id/landing/assets/images/landing-page/486a7c295e8d89921880de9e54b8c829.png",
+    LAYANAN_IMAGE_2: "https://sipd.kemendagri.go.id/landing/assets/images/landing-page/43dbc65bd062d0f7a3d4b58d78bc04bf.png",
+    LAYANAN_IMAGE_3: "https://sipd.kemendagri.go.id/landing/assets/images/landing-page/aed1cc4c287975eccb00d9418a32b88a.png"
+}
 
 const handleLogout = async () => {
     try {
@@ -245,7 +257,6 @@ const handleLogout = async () => {
     }
 };
 
-
 // Image slider data
 const images = [
     'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/stiker/papua-barat-daya.png',
@@ -259,21 +270,21 @@ let interval = null
 // Layanan data
 const daftarLayanan = [
     {
-        img: 'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/486a7c295e8d89921880de9e54b8c829.png',
+        img: env.LAYANAN_IMAGE_1,
         judul: 'INFORMASI PEMBANGUNAN DAERAH',
         deskripsi:
             'Informasi Pembangunan Daerah adalah suatu sistem yang digunakan untuk pengelolaan data dan informasi perencanaan pembangunan daerah, serta analisis dan Profil Pembangunan Daerah.',
         peraturan: 'Permendagri 70 Tahun 2019 tentang Sistem Informasi Pemerintahan Daerah',
     },
     {
-        img: 'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/43dbc65bd062d0f7a3d4b58d78bc04bf.png',
+        img: env.LAYANAN_IMAGE_2,
         judul: 'INFORMASI KEUANGAN DAERAH',
         deskripsi:
             'Informasi Keuangan Daerah adalah suatu sistem yang digunakan untuk pengelolaan data dan informasi serta penyusunan, monitoring, dan evaluasi dokumen pengelolaan keuangan daerah secara elektronik.',
         peraturan: 'Permendagri 70 Tahun 2019 tentang Sistem Informasi Pemerintahan Daerah',
     },
     {
-        img: 'https://sipd.kemendagri.go.id/landing/assets/images/landing-page/aed1cc4c287975eccb00d9418a32b88a.png',
+        img: env.LAYANAN_IMAGE_3,
         judul: 'INFORMASI PEMERINTAHAN DAERAH LAINNYA',
         deskripsi: 'Informasi Pemerintahan Daerah Lainnya adalah suatu sistem yang digunakan untuk pengelolaan data dan informasi lainnya.',
         peraturan: 'Permendagri 70 Tahun 2019 tentang Sistem Informasi Pemerintahan Daerah',
@@ -291,10 +302,7 @@ const iframeLoading = ref(false)
 // Check allowed origins for security
 const isAllowedOrigin = (origin) => {
     const allowedOrigins = [
-        'http://localhost:3000',
-        'https://your-production-chatbot-domain.com',
-        // 'http://82.25.108.179:9002',
-        // 'http://82.25.108.179:3000'
+        env.CHATBOT_URL
     ]
     return allowedOrigins.includes(origin)
 }
@@ -304,7 +312,7 @@ const fetchUserData = async () => {
     if (!token.value) return
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/profile', {
+        const response = await fetch(`${env.API_BASE_URL}/api/profile`, {
             headers: {
                 'Authorization': `Bearer ${token.value}`,
                 'Accept': 'application/json',
@@ -332,9 +340,6 @@ const sendAuthDataToIframe = () => {
     const iframe = iframeRef.value
     if (!iframe || !token.value || !userData.value) return
 
-    // const chatbotOrigin = 'http://82.25.108.179:9002'
-    const chatbotOrigin = 'http://localhost:3000'
-
     try {
         iframe.contentWindow?.postMessage({
             type: 'auth',
@@ -345,7 +350,7 @@ const sendAuthDataToIframe = () => {
                 email: userData.value.email,
                 no_hp: userData.value.no_hp
             }
-        }, chatbotOrigin)
+        }, env.CHATBOT_URL)
     } catch (error) {
         console.error('Failed to post message to iframe:', error)
     }

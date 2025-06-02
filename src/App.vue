@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watch } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { RouterView } from 'vue-router';
+
+// Environment variables
+const env = {
+  API_BASE_URL: import.meta.env.VITE_APP_API_BASE_URL,
+  CHATBOT_URL: import.meta.env.VITE_APP_CHATBOT_URL,
+  ALLOWED_ORIGINS: [
+    import.meta.env.VITE_APP_CHATBOT_URL?.replace(/\/$/, '') // Remove trailing slash
+  ].filter(Boolean) as string[]
+};
 
 // Refs
 const iframeRef = ref<HTMLIFrameElement | null>(null);
@@ -16,11 +25,7 @@ const isLoggedIn = ref(!!token.value);
 
 // CORS safe origin check
 const isAllowedOrigin = (origin: string) => {
-  const allowedOrigins = [
-    'http://localhost:3000',
-    'https://your-production-chatbot-domain.com'
-  ];
-  return allowedOrigins.includes(origin);
+  return env.ALLOWED_ORIGINS.includes(origin);
 };
 
 // Fetch user data from Laravel API
@@ -28,7 +33,7 @@ const fetchUserData = async () => {
   if (!token.value) return;
 
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/profile', {
+    const response = await fetch(`${env.API_BASE_URL}/api/profile`, {
       headers: {
         'Authorization': `Bearer ${token.value}`,
         'Accept': 'application/json',
@@ -61,8 +66,6 @@ const sendAuthDataToIframe = () => {
   const iframe = iframeRef.value;
   if (!iframe || !token.value) return;
 
-  const chatbotOrigin = 'http://localhost:3000';
-
   const payload = {
     type: 'auth',
     token: token.value,
@@ -71,9 +74,7 @@ const sendAuthDataToIframe = () => {
       name: userData.value?.name,
       email: userData.value?.email,
       no_hp: userData.value?.no_hp,
-      // Include token in user data
       auth_token: token.value,
-      // Include raw token data if needed
       token_data: {
         value: token.value,
         expires_at: localStorage.getItem('token_expires_at'),
@@ -82,12 +83,15 @@ const sendAuthDataToIframe = () => {
     }
   };
 
-  iframe.contentWindow?.postMessage(payload, chatbotOrigin);
+  iframe.contentWindow?.postMessage(payload, env.CHATBOT_URL);
 };
 
 // Handle messages from iframe securely
 const handleMessage = (event: MessageEvent) => {
-  if (!isAllowedOrigin(event.origin)) return;
+  if (!isAllowedOrigin(event.origin)) {
+    console.warn('Message from unauthorized origin:', event.origin);
+    return;
+  }
 
   const { type, isOpen } = event.data || {};
 
@@ -99,7 +103,6 @@ const handleMessage = (event: MessageEvent) => {
     }
   }
 
-  // Handle token refresh requests from iframe
   if (type === 'refresh_token' && token.value) {
     sendAuthDataToIframe();
   }
@@ -155,7 +158,7 @@ watch(token, (newToken) => {
   <RouterView />
 
   <!-- Chatbot iframe - only show when logged in -->
-  <iframe v-if="isLoggedIn" ref="iframeRef" id="chatbot-frame" src="http://localhost:3000/" :style="{
+  <iframe v-if="isLoggedIn" ref="iframeRef" id="chatbot-frame" :src="env.CHATBOT_URL" :style="{
     position: 'fixed',
     bottom: '20px',
     right: '20px',
@@ -166,6 +169,6 @@ watch(token, (newToken) => {
     borderRadius: '12px',
     zIndex: 9999,
     overflow: 'hidden',
-    // boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
   }" allow="microphone" title="Chatbot"></iframe>
 </template>
