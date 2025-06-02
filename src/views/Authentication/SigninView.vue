@@ -2,7 +2,7 @@
 import DefaultAuthCard from '@/components/Auths/DefaultAuthCard.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { instance } from '@/views/helper/axios' // axios instance with interceptor
+import axios from 'axios'
 
 const email = ref('')
 const password = ref('')
@@ -11,6 +11,15 @@ const isLoading = ref(false)
 const showPassword = ref(false)
 
 const router = useRouter()
+
+// Create axios instance with base URL from environment variable
+const api = axios.create({
+  baseURL: import.meta.env.VITE_APP_API_BASE_URL || 'http://127.0.0.1:8000',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+})
 
 const validateEmail = (email: string) => {
   const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -38,7 +47,7 @@ const handleSubmit = async () => {
   try {
     isLoading.value = true
 
-    const response = await instance.post('/api/login', {
+    const response = await api.post('/api/login', {
       email: email.value,
       password: password.value
     })
@@ -46,10 +55,13 @@ const handleSubmit = async () => {
     if (response.data.success) {
       const token = response.data.token
 
-      // Simpan token ke localStorage (atau sessionStorage jika lebih aman)
+      // Save token to localStorage
       localStorage.setItem('token', token)
 
-      // Redirect ke dashboard
+      // Set default Authorization header for future requests
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+
+      // Redirect to dashboard
       router.push({ name: 'dashboard' })
     } else {
       errorMessage.value = response.data.message || 'Login gagal.'
@@ -57,8 +69,11 @@ const handleSubmit = async () => {
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       errorMessage.value = 'Email atau password salah.'
+    } else if (error.response && error.response.data && error.response.data.message) {
+      errorMessage.value = error.response.data.message
     } else {
       errorMessage.value = 'Terjadi kesalahan. Coba lagi nanti.'
+      console.error('Login error:', error)
     }
   } finally {
     isLoading.value = false
@@ -94,15 +109,39 @@ const handleSubmit = async () => {
         </button>
       </div>
 
-      <!-- Error -->
-      <p v-if="errorMessage" class="text-red mt-2">{{ errorMessage }}</p>
+      <!-- Error Message -->
+      <p v-if="errorMessage" class="text-red-500 mt-2 text-sm">{{ errorMessage }}</p>
 
-      <!-- Submit -->
-      <div class="mb-5 mt-6">
+      <!-- Remember Me & Forgot Password -->
+      <div class="flex items-center justify-between mt-4 mb-6">
+        <div class="flex items-center">
+          <input id="remember-me" type="checkbox"
+            class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary">
+          <label for="remember-me" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+            Remember me
+          </label>
+        </div>
+        <router-link to="/forgot-password" class="text-sm text-primary hover:underline">
+          Forgot password?
+        </router-link>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="mb-5">
         <button type="submit" :disabled="isLoading"
           class="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 font-medium text-white transition hover:bg-opacity-90 disabled:opacity-60 disabled:cursor-not-allowed">
-          {{ isLoading ? 'Loading...' : 'Masuk' }}
+          {{ isLoading ? 'Loading...' : 'Sign In' }}
         </button>
+      </div>
+
+      <!-- Sign Up Link -->
+      <div class="text-center">
+        <p class="text-sm text-gray-600 dark:text-gray-300">
+          Don't have an account?
+          <router-link to="/register" class="text-primary hover:underline">
+            Sign up
+          </router-link>
+        </p>
       </div>
     </form>
   </DefaultAuthCard>

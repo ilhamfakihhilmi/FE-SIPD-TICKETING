@@ -1,14 +1,11 @@
 <template>
     <div class="min-h-screen bg-white text-black flex flex-col">
-        <!-- Header -->
         <header class="bg-white w-full px-12 py-4 flex justify-between items-center shadow-md">
-            <!-- Logo -->
             <div class="flex items-center gap-3">
                 <img src="https://pusdatin.dikdasmen.go.id/logo-footer-2.png" alt="Logo SIPD"
                     class="w-24 h-12 object-contain" />
             </div>
 
-            <!-- Contact Info dan Logout Button -->
             <div class="flex items-center gap-10">
                 <div class="text-right text-sm leading-snug flex flex-row gap-10">
                     <p class="text-black font-bold">Beranda</p>
@@ -16,7 +13,6 @@
                     <p class="text-black font-bold">Email pusdatin@kemhan.go.id</p>
                 </div>
 
-                <!-- Logout Button -->
                 <button @click="handleLogout"
                     class="flex items-center gap-2 text-red-600 hover:text-red-800 transition-colors" title="Logout">
                     <i class="fas fa-sign-out-alt"></i>
@@ -25,13 +21,10 @@
             </div>
         </header>
 
-        <!-- Content -->
         <main
             class="flex-1 flex gap-1 items-center justify-center px-2 py-10 bg-[url('https://pusdatin.dikdasmen.go.id/images/kontak-kami.png')] bg-cover bg-center relative">
-            <!-- Dark overlay layer -->
             <div class="absolute inset-0 bg-white opacity-40 z-0"></div>
             <div class="max-w-6xl w-full flex flex-col md:flex-row gap-8 items-center relative z-10">
-                <!-- Left section -->
                 <div class="flex-1">
                     <h1 class="text-2xl md:text-3xl font-semibold text-white">Selamat Datang di,</h1>
                     <div class="flex items-center gap-4 mt-4">
@@ -45,9 +38,7 @@
                     </p>
                 </div>
 
-                <!-- Right section with dynamic image slider -->
-                <div class="flex-1 flex flex-col gap-4"> <!-- Tambahkan gap untuk spasi konsisten -->
-                    <!-- Bagian Carousel Gambar -->
+                <div class="flex-1 flex flex-col gap-4">
                     <div
                         class="w-[600px] h-[250px] rounded-xl p-4 relative z-10 flex justify-center items-center overflow-hidden bg-white bg-opacity-10 backdrop-blur-md">
                         <transition-group name="fade" tag="div" class="relative w-full h-full">
@@ -56,7 +47,6 @@
                         </transition-group>
                     </div>
 
-                    <!-- Bagian Informasi Aplikasi -->
                     <div
                         class="w-[600px] h-[250px] bg-white bg-opacity-10 rounded-xl p-4 backdrop-blur-md relative z-10 flex flex-col justify-between">
                         <div>
@@ -74,9 +64,8 @@
             </div>
         </main>
 
-        <!-- Chatbot iframe container -->
         <div class="chatbot-container">
-            <iframe ref="iframeRef" id="chatbot-frame" src="http://82.25.108.179:9002/"
+            <iframe ref="iframeRef" id="chatbot-frame" :src="env.CHATBOT_URL"
                 :class="{ 'iframe-error': iframeError, 'iframe-loading': iframeLoading }" :style="{
                     width: isChatOpen ? '380px' : '80px',
                     height: isChatOpen ? '680px' : '80px',
@@ -99,6 +88,23 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
+
+const env = {
+    API_BASE_URL: import.meta.env.VITE_APP_API_BASE_URL,
+    CHATBOT_URL: import.meta.env.VITE_APP_CHATBOT_URL,
+    SIPD_LOGO_URL: "https://sipd.kemendagri.go.id/landing/assets/images/logo/logo-light-min.webp",
+    SIPD_SYMBOL_URL: "https://sipd.kemendagri.go.id/landing/assets/images/logo/symbol-white-letter.png",
+    BACKGROUND_IMAGE_URL: "https://sifilma.kemendagri.go.id/sam/image/mockup/6c07cb2abfaea6b85b67fb0307331740.jpg",
+    MAP_IMAGE_URL: "https://sipd.kemendagri.go.id/landing/assets/images/landing-page/1ebacdaf637a5f0c817ffcb5bfb8b2f6.png",
+    LAYANAN_IMAGE_1: "https://sipd.kemendagri.go.id/landing/assets/images/landing-page/486a7c295e8d89921880de9e54b8c829.png",
+    LAYANAN_IMAGE_2: "https://sipd.kemendagri.go.id/landing/assets/images/landing-page/43dbc65bd062d0f7a3d4b58d78bc04bf.png",
+    LAYANAN_IMAGE_3: "https://sipd.kemendagri.go.id/landing/assets/images/landing-page/aed1cc4c287975eccb00d9418a32b88a.png"
+}
+
+const router = useRouter(); // Dipindahkan ke atas agar bisa diakses oleh handleLogout
+
+const token = ref(localStorage.getItem('token')) // Definisikan token di scope yang lebih tinggi
+const userData = ref(null) // Definisikan userData di scope yang lebih tinggi
 
 const handleLogout = async () => {
     try {
@@ -161,7 +167,6 @@ const handleLogout = async () => {
     }
 };
 
-
 // Image slider data
 const images = [
     'https://assets.promediateknologi.id/crop/135x170:1421x934/750x500/webp/photo/2023/07/04/kalender-pendidikan-tahun-ajaran-baru-2023-2024-untuk-sd-smp-dan-sma-sederajat-di-jawa-tengah-ini-jadwalnya-3853037572.jpg',
@@ -172,26 +177,27 @@ const images = [
 const currentImage = ref(0)
 let interval = null
 
-// Layanan data
-
-
 // Chatbot iframe functionality
 const iframeRef = ref(null)
 const isChatOpen = ref(false)
-const token = ref(localStorage.getItem('token'))
-const userData = ref(null)
+// token dan userData sudah didefinisikan di atas
 const iframeError = ref(false)
 const iframeLoading = ref(false)
 
 // Check allowed origins for security
 const isAllowedOrigin = (origin) => {
+    // Daftar origin yang diizinkan kini menyertakan CHATBOT_URL dari env
     const allowedOrigins = [
-        // 'http://localhost:3000',
-        // 'https://your-production-chatbot-domain.com',
-        'http://82.25.108.179:9002',
-        // 'http://82.25.108.179:3000'
-    ]
-    return allowedOrigins.includes(origin)
+        env.CHATBOT_URL, // Dinamis dari variabel lingkungan
+        // Anda bisa menambahkan origin statis lainnya jika diperlukan
+        // 'http://localhost:some_other_port'
+    ];
+    // Pastikan env.CHATBOT_URL ada sebelum melakukan pengecekan
+    if (!env.CHATBOT_URL) {
+        console.warn('CHATBOT_URL is not defined in env. Cannot validate origin.');
+        return false;
+    }
+    return allowedOrigins.includes(origin);
 }
 
 // Fetch user data from API 
@@ -199,7 +205,7 @@ const fetchUserData = async () => {
     if (!token.value) return
 
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/profile', {
+        const response = await fetch(`${env.API_BASE_URL}/api/profile`, {
             headers: {
                 'Authorization': `Bearer ${token.value}`,
                 'Accept': 'application/json',
@@ -227,8 +233,11 @@ const sendAuthDataToIframe = () => {
     const iframe = iframeRef.value
     if (!iframe || !token.value || !userData.value) return
 
-    // const chatbotOrigin = 'http://82.25.108.179:9002'
-    const chatbotOrigin = 'http://82.25.108.179:9002'
+    // Pastikan env.CHATBOT_URL tersedia
+    if (!env.CHATBOT_URL) {
+        console.error('CHATBOT_URL is not defined. Cannot send message to iframe.');
+        return;
+    }
 
     try {
         iframe.contentWindow?.postMessage({
@@ -240,7 +249,7 @@ const sendAuthDataToIframe = () => {
                 email: userData.value.email,
                 no_hp: userData.value.no_hp
             }
-        }, chatbotOrigin)
+        }, env.CHATBOT_URL) // Target origin menggunakan env.CHATBOT_URL
     } catch (error) {
         console.error('Failed to post message to iframe:', error)
     }
@@ -249,7 +258,7 @@ const sendAuthDataToIframe = () => {
 // Handle messages from iframe
 const handleMessage = (event) => {
     if (!isAllowedOrigin(event.origin)) {
-        console.warn('Message from unauthorized origin:', event.origin)
+        console.warn('Message from unauthorized origin:', event.origin, 'Expected:', env.CHATBOT_URL)
         return
     }
 
@@ -264,13 +273,11 @@ const handleMessage = (event) => {
     }
 }
 
-const router = useRouter();
-
 // Iframe event handlers
 const handleIframeLoad = () => {
     iframeLoading.value = false
     iframeError.value = false
-    setTimeout(sendAuthDataToIframe, 1000)
+    setTimeout(sendAuthDataToIframe, 1000) // Kirim data setelah iframe dimuat
 }
 
 const handleIframeError = () => {
@@ -281,13 +288,18 @@ const handleIframeError = () => {
 const reloadIframe = () => {
     iframeError.value = false
     iframeLoading.value = true
-    iframeRef.value?.contentWindow?.location.reload()
+    if (iframeRef.value && iframeRef.value.contentWindow) {
+        iframeRef.value.contentWindow.location.reload();
+    } else if (iframeRef.value) {
+        // Fallback jika contentWindow tidak tersedia, coba set src lagi
+        iframeRef.value.src = env.CHATBOT_URL;
+    }
 }
 
-// Initialize image slider
+// Initialize
 onMounted(() => {
     window.addEventListener('message', handleMessage)
-    fetchUserData()
+    fetchUserData() // Ambil data pengguna saat komponen dimuat
 
     const iframe = iframeRef.value
     if (iframe) {
@@ -301,14 +313,24 @@ onMounted(() => {
         currentImage.value = (currentImage.value + 1) % images.length
     }, 3000)
 
-    // Listen for token changes
+    // Listen for token changes from other tabs/windows
     window.addEventListener('storage', (event) => {
         if (event.key === 'token') {
-            token.value = event.newValue
-            if (event.newValue) {
-                fetchUserData()
+            const newTokenValue = event.newValue;
+            token.value = newTokenValue;
+            if (newTokenValue) {
+                fetchUserData().then(() => {
+                    // Setelah data pengguna baru diambil, kirim ulang ke iframe jika sudah terbuka
+                    if (isChatOpen.value) {
+                        sendAuthDataToIframe();
+                    }
+                });
             } else {
-                userData.value = null
+                userData.value = null;
+                // Mungkin perlu mengirim pesan ke iframe bahwa pengguna telah logout
+                if (iframeRef.value && iframeRef.value.contentWindow && env.CHATBOT_URL) {
+                    iframeRef.value.contentWindow.postMessage({ type: 'auth_clear' }, env.CHATBOT_URL);
+                }
             }
         }
     })
@@ -321,7 +343,7 @@ onUnmounted(() => {
         iframe.removeEventListener('load', handleIframeLoad)
         iframe.removeEventListener('error', handleIframeError)
     }
-    window.removeEventListener('storage', () => { })
+    window.removeEventListener('storage', () => { }) // Sebaiknya berikan fungsi yang sama untuk dihapus
     clearInterval(interval)
 })
 </script>
@@ -348,7 +370,8 @@ onUnmounted(() => {
     z-index: 9999;
 }
 
-#iframe-chatbot {
+#chatbot-frame {
+    /* Mengubah dari #iframe-chatbot menjadi #chatbot-frame agar sesuai dengan id di template */
     border: none;
     border-radius: 12px;
     transition: all 0.3s ease;
@@ -361,20 +384,27 @@ onUnmounted(() => {
 }
 
 .iframe-error {
-    border: 2px solid #ff4444;
+    border: 2px solid #ff4444 !important;
+    /* Tambahkan !important jika perlu override style lain */
 }
 
 .iframe-loading-state,
 .iframe-error-state {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    /* Disesuaikan agar muncul di atas ikon iframe saat belum terbuka penuh */
+    bottom: 10px;
+    right: 10px;
     padding: 10px;
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 200px;
+    width: auto;
+    /* Lebar otomatis sesuai konten */
+    min-width: 150px;
+    /* Lebar minimal */
     text-align: center;
+    z-index: 10000;
+    /* Pastikan di atas iframe */
 }
 
 .iframe-error-state {
@@ -400,6 +430,25 @@ onUnmounted(() => {
 @media (max-width: 768px) {
     .hidden-md {
         display: none;
+    }
+
+    /* Penyesuaian untuk header pada mobile */
+    header.px-12 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .text-right.gap-10 {
+        gap: 0.5rem;
+        /* Kurangi gap pada mobile */
+        flex-direction: column;
+        /* Susun vertikal jika perlu */
+        align-items: flex-end;
+    }
+
+    header .flex.items-center.gap-10 {
+        gap: 1rem;
+        /* Kurangi gap utama di header */
     }
 }
 </style>
